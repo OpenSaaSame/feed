@@ -1,0 +1,221 @@
+-- Copyright (c) 2020 The DAML Authors. All rights reserved.
+-- SPDX-License-Identifier: Apache-2.0
+
+daml 1.2
+module Post where
+
+import DA.List as L
+import DA.Optional
+import DA.Foldable as F
+
+-------------------------------------
+-- Represents a User in the system --
+-------------------------------------
+data Follower = Follower
+  with
+    username : Party
+    displayName : Text
+      deriving (Eq, Ord, Show)
+
+template User
+  with
+    username : Party
+    displayName : Text
+    description : Text
+    email : Text
+    followers : [Follower]
+    createdAt : Time
+    avatarUrl : Text
+    admin : Party
+  where
+    signatory username
+    observer map (\f -> f.username) followers, admin
+
+    key username : Party
+    maintainer key
+
+    -- username choices
+    controller username can
+
+      User_UPDATE : ContractId User
+        with
+          newUser : User
+        do
+          create this with
+            displayName = newUser.displayName
+            description = newUser.description
+            email = newUser.email
+            avatarUrl = newUser.avatarUrl
+
+      UserFollower_ACCEPT : ContractId User
+        with
+          followeeProposal : UserFollowerProposal
+        do
+          let newFollower = Follower with username = followeeProposal.newFollower.username, displayName = followeeProposal.newFollower.displayName
+
+          -- 1/ Add the new follower to our user
+          userCid <- create this with followers = dedup (newFollower :: followers)
+          user <- fetch userCid
+
+          -- 2/ Update all existing Posts with the new follower if any exist
+          postIndexCid <- lookupByKey @PostIndex username
+          case postIndexCid of
+            None -> pure()
+            Some cid -> do
+              postIndex <- fetch cid
+              F.forA_ postIndex.postIds (\postId -> do
+                (postCid, _) <- fetchByKey @Post (username, postId)
+                exercise postCid Post_author_UPDATE with newAuthor = user
+                )
+
+          -- 3/ Return the new User contract id
+          return userCid
+
+      ----------------------------------------------------------------------------------------
+      -- Request to create Posts - All posts MUST be created via this template  --------------
+      -- 1/ Manages the Post creation while maintaining/creating the PostIndex for the user --
+      ----------------------------------------------------------------------------------------
+      nonconsuming Post_CREATE : ContractId Post
+        with
+          id : Text
+          body : Text
+          isRepost : Bool
+          parentPost : Optional PostUid
+          postCreatedAt : Time
+        do
+          -- 1/ Create the new post
+          postCid <- create Post with author = this, likes = [], createdAt = postCreatedAt, ..
+
+          -- 2/ Maintain the PostIndex for this user
+          postIndexCid <- lookupByKey @PostIndex username
+          case postIndexCid of
+            None -> create PostIndex with username, postIds = [id]
+            Some cid -> exercise cid PostIndex_postIds_ADD with postId = id
+
+          -- 3/ Return Post CID
+          return postCid
+
+-------------------------------------------------------------------------------------------------
+-- Request to follow a user - In order to follow someone (ie, a User), we must make a proposal --
+-------------------------------------------------------------------------------------------------
+template UserFollowerProposal
+  with
+    newFollower : User
+    followee : Party
+  where
+    signatory newFollower.username
+    observer followee
+    -- TODO - Add check that the new follower exists
+
+    -- Followee choices
+    controller followee can
+
+      UserFollowerProposal_ACCEPT : ContractId User
+        do
+          exerciseByKey @User followee UserFollower_ACCEPT with followeeProposal = this
+
+      UserFollowerProposal_REJECT : ()
+        do
+          return ()
+
+    -- newFollower choices
+    controller newFollower.username can
+      UserFollowerProposal_CANCEL : ()
+        do
+          return ()
+
+-----------------------------------------------------------------------------
+-- A Post (ie, a "Tweet") created by a user and visable to their followers --
+-----------------------------------------------------------------------------
+
+-- Post Unique Contract Key
+type PostUid = (Party, Text)
+
+template Post
+  with
+    id : Text
+    author : User
+    body : Text
+    likes : [Party]
+    isRepost : Bool
+    parentPost : Optional PostUid
+    createdAt : Time
+  where
+    ensure body /= ""
+    signatory author.username
+    observer map (\f -> f.username) author.followers
+
+    key (author.username, id) : PostUid
+    maintainer key._1
+
+    -- Author choices
+    controller author.username can
+
+      Post_body_UPDATE : ContractId Post
+        with
+          newBody : Text
+        do
+          assertMsg "Post content not modified" (newBody /= body)
+          create this with body = newBody
+
+      Post_author_UPDATE : ContractId Post
+        with
+          newAuthor : User
+        do
+          assertMsg "Author has not been modified" (newAuthor /= author)
+          assertMsg "Cannot modify the author's username of an existing Post" (newAuthor.username == author.username)
+          create this with author = newAuthor
+
+    -- Follower choices
+    controller map (\f -> f.username) author.followers can
+      nonconsuming Post_REPOST : ContractId Post
+        with
+          rePostId : Text
+          rePoster : Party
+          rePostedAt : Time
+        do
+          userExists <- lookupByKey @User rePoster
+          assertMsg (show rePoster <> " does not have a user profile") (isSome userExists)
+
+          exerciseByKey @User rePoster Post_CREATE
+            with
+              id = rePostId
+              body
+              isRepost = True
+              parentPost = Some (author.username, id)
+              postCreatedAt = rePostedAt
+
+    -- Choices (avoids multi-party authorisation due to multiple observers when using a controller template)
+    choice Post_like_ADD : ContractId Post
+      with liker : Party
+      controller liker
+        do
+          assertMsg (show liker <> " has already liked this Post") (liker `notElem` likes)
+          create this with likes = liker :: likes
+
+    choice Post_like_REMOVE : ContractId Post
+      with liker : Party
+      controller liker
+        do
+          assertMsg (show liker <> " has not liked this Post") (liker `L.elem` likes)
+          create this with likes = filter (\l -> l /= liker) likes
+
+---------------------------------------------------------------------------
+-- Index Management for each Post  ----------------------------------------
+-- 1/ Required due to the high rate of change possible against each post --
+---------------------------------------------------------------------------
+template PostIndex
+  with
+    username : Party
+    postIds : [Text]
+  where
+    signatory username
+
+    key username : Party
+    maintainer key
+
+    controller username can
+      PostIndex_postIds_ADD : ContractId PostIndex
+        with postId : Text
+        do
+          create this with postIds = dedupSort (postId :: postIds)

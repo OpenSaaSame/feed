@@ -1,0 +1,67 @@
+{
+  "name": "openwork-feeds-react",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "@daml/ledger": "1.4.0",
+    "@daml/react": "1.4.0",
+    "@daml/types": "1.4.0",
+    "@daml-js/openwork-feeds-0.0.1": "file:../daml2js/openwork-feeds-0.0.1",
+    "@mojotech/json-type-validation": "^3.1.0",
+    "@types/jest": "24.0.18",
+    "@types/node": "12.7.12",
+    "@types/react": "16.9.5",
+    "@types/react-dom": "16.9.1",
+    "@types/react-router-dom": "^5.1.3",
+    "@types/uuid": "^7.0.0",
+    "cross-fetch": "^3.0.4",
+    "email-validator": "^2.0.4",
+    "immutable": "^4.0.0-rc.12",
+    "jwt-simple": "^0.5.6",
+    "moment": "^2.24.0",
+    "react": "^16.10.2",
+    "react-async": "^9.0.0",
+    "react-dom": "^16.10.2",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "^3.3.0",
+    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^0.88.1",
+    "typescript": "^3.7.4",
+    "uuid": "^7.0.2"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build --profile",
+    "test": "react-scripts test --testURL='http://localhost:7575'",
+    "eject": "react-scripts eject",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx src/",
+    "storybook": "start-storybook -p 9001 -c .storybook"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "proxy": "http://localhost:7575",
+  "devDependencies": {
+    "@babel/core": "^7.6.4",
+    "@storybook/react": "^5.2.4",
+    "@types/jwt-simple": "^0.5.33",
+    "@types/storybook__react": "^4.0.2",
+    "awesome-typescript-loader": "^5.2.1",
+    "babel-loader": "^8.0.6",
+    "json2typescript": "^1.2.3",
+    "react-docgen-typescript-loader": "^3.3.0",
+    "react-docgen-typescript-webpack-plugin": "^1.1.0"
+  }
+}

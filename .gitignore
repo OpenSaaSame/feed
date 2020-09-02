@@ -1,0 +1,47 @@
+# General
+.vscode
+.idea
+.env
+.DS_STORE
+build/
+.daml
+node_modules
+daml2js
+target
+deploy
+*.log
+*.code-workspace
+stats.json
+
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
