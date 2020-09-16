@@ -1,4 +1,4 @@
-sdk-version: 1.4.0
+sdk-version: 1.5.0
 name: openwork-feeds
 source: daml
 parties:
@@ -13,3 +13,4 @@ sandbox-options:
 dependencies:
   - daml-prim
   - daml-stdlib
+  - daml-script

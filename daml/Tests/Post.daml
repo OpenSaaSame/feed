@@ -4,21 +4,22 @@
 daml 1.2
 module Tests.Post where
 
+import Daml.Script
 import Post
 
-post_unit_tests = scenario do
+post_unit_tests = script do
   -- Create our Parties
-  bob <- getParty "bob"
-  alice <- getParty "alice"
-  charlie <- getParty "charlie"
+  bob <- allocateParty "bob"
+  alice <- allocateParty "alice"
+  charlie <- allocateParty "charlie"
   -- Get the current time
   now <- getTime
   -- Public Party
-  admin <- getParty "admin"
+  admin <- allocateParty "admin"
 
   -- Create Alice's User profile
   aliceUserCid <- submit alice do
-    create User with
+    createCmd User with
       username = alice
       displayName = "Alice in Wonderland"
       description = "Roaming the fields on my horse"
@@ -30,7 +31,7 @@ post_unit_tests = scenario do
 
   -- Alice creates a post
   submit alice do
-    exercise aliceUserCid Post_CREATE
+    exerciseCmd aliceUserCid Post_CREATE
      with
       id = "1"
       body = "My first post"
@@ -40,7 +41,7 @@ post_unit_tests = scenario do
 
   -- Alice creates an idential post with the same ID -> Expected failure due to unique key violation
   submitMustFail alice do
-    exercise aliceUserCid Post_CREATE
+    exerciseCmd aliceUserCid Post_CREATE
       with
         id = "1"
         body = "My first post"
@@ -50,7 +51,7 @@ post_unit_tests = scenario do
 
 -- Alice creates a second post
   submit alice do
-    exercise aliceUserCid Post_CREATE
+    exerciseCmd aliceUserCid Post_CREATE
       with
         id = "2"
         body = "My second post"
@@ -60,7 +61,7 @@ post_unit_tests = scenario do
 
 -- Alice creates a post in response to her own post
   submit alice do
-    exercise aliceUserCid Post_CREATE
+    exerciseCmd aliceUserCid Post_CREATE
       with
         id = "3"
         body = "My third post"
@@ -69,14 +70,13 @@ post_unit_tests = scenario do
         postCreatedAt = now
 
   -- Bob attempts to view existing contracts which he has no visibility as he is not a follower
-  submitMustFail bob do
-    fetchByKey @Post (alice, "1")
-    fetchByKey @Post (alice, "2")
-    fetchByKey @Post (alice, "3")
+  None <- queryContractKey @Post bob (alice, "1")
+  None <- queryContractKey @Post bob (alice, "2")
+  None <- queryContractKey @Post bob (alice, "3")
 
   -- Create Bob's User profile
   bobUserCid <- submit bob do
-    create User with
+    createCmd User with
       username = bob
       displayName = "Bob can build it"
       description = "Building software"
@@ -87,78 +87,75 @@ post_unit_tests = scenario do
       admin
 
   -- Bob creates a request to follow Alice
+  Some bobUser <- queryContractId bob bobUserCid
   bobFollowerProposal <- submit bob do
-    bobUser <- fetch bobUserCid
-    create UserFollowerProposal with
+    createCmd UserFollowerProposal with
       newFollower = bobUser
       followee = alice
 
   -- Alice approves the request
   aliceUserCid <- submit alice do
-    exercise bobFollowerProposal UserFollowerProposal_ACCEPT
+    exerciseCmd bobFollowerProposal UserFollowerProposal_ACCEPT
 
   -- Assert that bob now has visibility on the existing posts
-  submit bob do
-    fetchByKey @Post (alice, "1")
-    fetchByKey @Post (alice, "2")
-    fetchByKey @Post (alice, "3")
+  Some _ <- queryContractKey @Post bob (alice, "1")
+  Some _ <- queryContractKey @Post bob (alice, "2")
+  Some _ <- queryContractKey @Post bob (alice, "3")
 
   -- Adding a follower updates the contract of all existing posts of the user getting followed -> Get the new Contract ID
-  alicePost <- submit alice do
-    (cid, post) <- fetchByKey @Post (alice, "1")
-    return cid
+  Some (alicePost, _) <- queryContractKey @Post alice (alice, "1")
 
   -- Modify Alice's post as Alice
   alicePost <- submit alice do
-    exercise alicePost Post_body_UPDATE with newBody = "Updating my first post"
+    exerciseCmd alicePost Post_body_UPDATE with newBody = "Updating my first post"
 
   -- Modify Alice's post with the same content -> Expected failure as the body content is the same as current post
   submitMustFail alice do
-    exercise alicePost Post_body_UPDATE with newBody = "Updating my first post"
+    exerciseCmd alicePost Post_body_UPDATE with newBody = "Updating my first post"
 
   -- Modify Alice's post as Bob -> Expected failure as Bob is not a signatory
   submitMustFail bob do
-    exercise alicePost Post_body_UPDATE with newBody = "I cannot modify someone elses post!"
+    exerciseCmd alicePost Post_body_UPDATE with newBody = "I cannot modify someone elses post!"
 
   -- Bob likes Alices post
   alicePost <- submit bob do
-    exercise alicePost Post_like_ADD with liker = bob
+    exerciseCmd alicePost Post_like_ADD with liker = bob
 
   -- Bob likes Alices post again -> Expected failure as you cannot like a post more than more
   submitMustFail bob do
-    exercise alicePost Post_like_ADD with liker = bob
+    exerciseCmd alicePost Post_like_ADD with liker = bob
 
   -- Bob removes his like from Alices post
   alicePost <- submit bob do
-    exercise alicePost Post_like_REMOVE with liker = bob
+    exerciseCmd alicePost Post_like_REMOVE with liker = bob
 
   -- Bob attempted to remove his like again from Alices post -> Expected failure as its already removed
   submitMustFail bob do
-    exercise alicePost Post_like_REMOVE with liker = bob
+    exerciseCmd alicePost Post_like_REMOVE with liker = bob
 
   -- Alice creates a request to follow Bob -> Test of following someone with no posts
+  Some aliceUser <- queryContractId alice aliceUserCid
   aliceFollowerProposal <- submit alice do
-    aliceUser <- fetch aliceUserCid
-    create UserFollowerProposal with
+    createCmd UserFollowerProposal with
       newFollower = aliceUser
       followee = bob
 
   -- Bob approves the request
   bobUserCid <- submit bob do
-    exercise aliceFollowerProposal UserFollowerProposal_ACCEPT
+    exerciseCmd aliceFollowerProposal UserFollowerProposal_ACCEPT
 
   -- Bob now attempts to repost Alice's post
   bobPost <- submit bob do
-    exercise alicePost Post_REPOST with rePoster = bob, rePostId = "1", rePostedAt = now
+    exerciseCmd alicePost Post_REPOST with rePoster = bob, rePostId = "1", rePostedAt = now
 
   -- Bob modifies his repost
   bobPost <- submit bob do
-    exercise bobPost Post_body_UPDATE with newBody = "RP: Updating my first post"
+    exerciseCmd bobPost Post_body_UPDATE with newBody = "RP: Updating my first post"
 
   -- Create an empty post -> Expected failure as you cannot create a contract with an empty boby
+  Some aliceUser <- queryContractId bob aliceUserCid
   submitMustFail bob do
-    aliceUser <- fetch aliceUserCid
-    create Post with
+    createCmd Post with
       id = "1"
       author = aliceUser
       body = ""
@@ -169,7 +166,7 @@ post_unit_tests = scenario do
 
   -- Create Alice's User profile
   charlieUserCid <- submit charlie do
-    create User with
+    createCmd User with
       username = charlie
       displayName = "Charles"
       description = "Enjoys biting my brothers finger"
@@ -180,28 +177,31 @@ post_unit_tests = scenario do
       admin
 
   -- Charlie wants to update his email address
+  Some charlieUser <- queryContractId charlie charlieUserCid
   charlieUserCid <- submit charlie do
-    charlieUser <- fetch charlieUserCid
-    exercise charlieUserCid User_UPDATE with newUser = charlieUser with email = "charlie@daml.com"
+    exerciseCmd charlieUserCid User_UPDATE with newUser = charlieUser with email = "charlie@daml.com"
 
   -- Charlie creates a follower request to follow Alice
+  Some charlieUser <- queryContractId charlie charlieUserCid
   aliceFollowerProposal <- submit charlie do
-    charlieUser <- fetch charlieUserCid
-    create UserFollowerProposal with
+    createCmd UserFollowerProposal with
       newFollower = charlieUser
       followee = alice
 
   -- Alice approves the request
   aliceUserCid <- submit alice do
-    exercise aliceFollowerProposal UserFollowerProposal_ACCEPT
+    exerciseCmd aliceFollowerProposal UserFollowerProposal_ACCEPT
 
   -- Adding a follower updates the contract of all existing posts of the user getting followed -> Get the new Contract ID
-  alicePost <- submit alice do
-    (cid, _) <- fetchByKey @Post (alice, "1")
-    return cid
+  Some (alicePost, _) <- queryContractKey @Post alice  (alice, "1")
 
   -- Charlie like's Alices post
   submit charlie do
-    exercise alicePost Post_like_ADD with liker = charlie
+    exerciseCmd alicePost Post_like_ADD with liker = charlie
 
   return ()
+
+  -- TODO remove once we upgrade to 1.6.0 where this is in the standard library
+queryContractKey : (TemplateKey t k, Eq k) => Party -> k -> Script (Optional (ContractId t, t))
+queryContractKey p k = find (\(_, t) -> key t == k) <$> query p
+
