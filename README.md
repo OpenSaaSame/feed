@@ -1,4 +1,4 @@
-# Openwork Feeds
+# Openwork Feed
 
 Copyright 2020 Digital Asset (Switzerland) GmbH and/or its affiliates. All Rights Reserved.
 SPDX-License-Identifier: Apache-2.0
