@@ -3,7 +3,7 @@ import {Divider, Header, Icon, Segment} from "semantic-ui-react";
 import PostModel, {TriggerType} from "./PostModal";
 import UserFeed from "./UserFeed";
 import LoadingSegment from "../common/LoadingSegment";
-import {Post} from "@daml-js/openwork-feeds-0.0.1/lib/Post";
+import {Post} from "@daml-js/openwork-feed-0.0.1/lib/Post";
 
 type Props = {
   allPosts: Post[];

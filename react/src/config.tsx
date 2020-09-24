@@ -14,7 +14,7 @@ export const deploymentMode: DeploymentMode =
 export const ledgerId =
   deploymentMode === DeploymentMode.PROD_DABL
     ? window.location.hostname.split('.')[0]
-    : 'openwork-feeds-sandbox';
+    : 'openwork-feed-sandbox';
 
 export const httpBaseUrl =
   deploymentMode === DeploymentMode.PROD_DABL

@@ -10,7 +10,7 @@ import UserFeedView from "./posts/UserFeedView";
 import CommentView from "./posts/CommentView";
 import {useFetchPublicCredentials} from "../utils/Hooks";
 import {ledgerId} from "../config";
-import {Post, User, UserFollowerProposal} from "@daml-js/openwork-feeds-0.0.1/lib/Post/module";
+import {Post, User, UserFollowerProposal} from "@daml-js/openwork-feed-0.0.1/lib/Post/module";
 
 /**
  * The Main Application containing the menu and the sub-components

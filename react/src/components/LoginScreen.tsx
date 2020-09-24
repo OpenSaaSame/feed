@@ -64,7 +64,7 @@ const LoginScreen: React.FC<Props> = ({onLogin, onLoad}) => {
                 verticalAlign='middle'
               />
               <p>
-                OpenWork Feeds
+                OpenWork Feed
               </p>
             </Header.Content>
           </Header>

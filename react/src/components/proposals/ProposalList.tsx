@@ -7,7 +7,7 @@ import {
   UserFollowerProposal,
   UserFollowerProposal_ACCEPT,
   UserFollowerProposal_REJECT
-} from "@daml-js/openwork-feeds-0.0.1/lib/Post";
+} from "@daml-js/openwork-feed-0.0.1/lib/Post";
 
 type Props = {
   followProposals: QueryResult<UserFollowerProposal, any, any>

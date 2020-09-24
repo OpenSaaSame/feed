@@ -1,12 +1,12 @@
 {
-  "name": "openwork-feeds-react",
+  "name": "openwork-feed-react",
   "version": "0.0.1",
   "private": true,
   "dependencies": {
     "@daml/ledger": "1.5.0",
     "@daml/react": "1.5.0",
     "@daml/types": "1.5.0",
-    "@daml-js/openwork-feeds-0.0.1": "file:../daml2js/openwork-feeds-0.0.1",
+    "@daml-js/openwork-feed-0.0.1": "file:../daml2js/openwork-feed-0.0.1",
     "@mojotech/json-type-validation": "^3.1.0",
     "@types/jest": "24.0.18",
     "@types/node": "12.7.12",

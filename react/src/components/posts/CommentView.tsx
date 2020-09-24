@@ -5,7 +5,7 @@ import PostModal, {TriggerType} from "./PostModal";
 import {Link, useParams} from 'react-router-dom';
 import SinglePost from "./SinglePost";
 import LoadingSegment from "../common/LoadingSegment";
-import {Post} from "@daml-js/openwork-feeds-0.0.1/lib/Post";
+import {Post} from "@daml-js/openwork-feed-0.0.1/lib/Post";
 
 type Props = {
   allPosts: Post[];
