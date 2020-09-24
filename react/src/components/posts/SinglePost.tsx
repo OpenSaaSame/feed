@@ -5,7 +5,7 @@ import moment from "moment";
 import {useLedger, useParty} from "@daml/react";
 import {Link} from "react-router-dom";
 import RepostModal from "./RepostModal";
-import {Post} from "@daml-js/openwork-feeds-0.0.1/lib/Post";
+import {Post} from "@daml-js/openwork-feed-0.0.1/lib/Post";
 
 type Props = {
   post: Post;

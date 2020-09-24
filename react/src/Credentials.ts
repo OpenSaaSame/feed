@@ -1,7 +1,7 @@
 import {decode, encode, TAlgorithm} from 'jwt-simple';
 import {ledgerId} from './config';
 
-export const APPLICATION_ID: string = 'openwork-feeds';
+export const APPLICATION_ID: string = 'openwork-feed';
 
 export const SECRET_KEY: string = 'secret';
 

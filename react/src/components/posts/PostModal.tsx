@@ -3,9 +3,9 @@ import {Button, Comment, Form, Label, Modal} from "semantic-ui-react";
 import {v4 as uuid} from "uuid";
 import moment from "moment";
 import {generatePost} from "../../utils/LedgerUtils";
-import {Post} from "@daml-js/openwork-feeds-0.0.1/lib/Post";
+import {Post} from "@daml-js/openwork-feed-0.0.1/lib/Post";
 import {useLedger, useParty} from "@daml/react";
-import {User} from "@daml-js/openwork-feeds-0.0.1/lib/Post/module";
+import {User} from "@daml-js/openwork-feed-0.0.1/lib/Post/module";
 
 export enum TriggerType {
   NewPost,

@@ -1,7 +1,7 @@
 import React from 'react';
 import {Card, Container} from "semantic-ui-react";
 import SinglePost from "./SinglePost";
-import {Post} from "@daml-js/openwork-feeds-0.0.1/lib/Post";
+import {Post} from "@daml-js/openwork-feed-0.0.1/lib/Post";
 
 type Props = {
   allPosts: Post[];

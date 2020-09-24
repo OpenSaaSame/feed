@@ -3,7 +3,7 @@ import {Party} from "@daml/types";
 import {useStreamQuery} from "@daml/react";
 import {Button, Card, Icon, Image, Segment} from "semantic-ui-react";
 import {CreateEvent} from "@daml/ledger";
-import {User, UserFollowerProposal} from "@daml-js/openwork-feeds-0.0.1/lib/Post";
+import {User, UserFollowerProposal} from "@daml-js/openwork-feed-0.0.1/lib/Post";
 
 type Props = {
   currentUser: User | undefined;
