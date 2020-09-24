@@ -3,7 +3,7 @@ catalog:
     version: 0.0.1
     short_description: OpenWork Feed
     description: Microblogging for team status updates
-    release_date: 2020-09-18
+    release_date: 2020-09-24
     author: Digital Asset (Switzerland) GmbH
     url: https://github.com/OpenSaaSame/feed
     license: Apache-2.0
