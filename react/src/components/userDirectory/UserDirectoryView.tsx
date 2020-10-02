@@ -6,7 +6,7 @@ import {httpBaseUrl, wsBaseUrl} from "../../config";
 import DamlLedger from "@daml/react";
 import PublicUserList from "./PublicUserList";
 import {CreateEvent} from "@daml/ledger";
-import {User, UserFollowerProposal} from "@daml-js/openwork-feeds-0.0.1/lib/Post";
+import {User, UserFollowerProposal} from "@daml-js/openwork-feed-0.0.1/lib/Post";
 
 type Props = {
   publicCredentials: Credentials;

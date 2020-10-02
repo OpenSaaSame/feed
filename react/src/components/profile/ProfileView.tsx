@@ -8,7 +8,7 @@ import {useParams} from "react-router-dom";
 import UserFeed from "../posts/UserFeed";
 import EditProfileView from "./EditProfileView";
 import AvatarModal from "../common/AvatarModal";
-import {Follower, Post, User} from "@daml-js/openwork-feeds-0.0.1/lib/Post";
+import {Follower, Post, User} from "@daml-js/openwork-feed-0.0.1/lib/Post";
 
 type Props = {
   allUsers: QueryResult<User, string, any>;

@@ -3,8 +3,8 @@ import {Button, Header, Icon, Modal} from "semantic-ui-react";
 import {useLedger, useParty} from "@daml/react";
 import {generatePost} from "../../utils/LedgerUtils";
 import {v4 as uuid} from "uuid";
-import {Post} from "@daml-js/openwork-feeds-0.0.1/lib/Post";
-import {User} from "@daml-js/openwork-feeds-0.0.1/lib/Post/module";
+import {Post} from "@daml-js/openwork-feed-0.0.1/lib/Post";
+import {User} from "@daml-js/openwork-feed-0.0.1/lib/Post/module";
 
 type Props = {
   post: Post

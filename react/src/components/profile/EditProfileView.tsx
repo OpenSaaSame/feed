@@ -4,7 +4,7 @@ import {useLedger, useParty} from "@daml/react";
 import {validate} from "email-validator"
 import {defaultPublicLedgerParty, deploymentMode, DeploymentMode, ledgerId} from "../../config";
 import {fetchDablPublicParty} from "../../utils/Hooks";
-import {User} from "@daml-js/openwork-feeds-0.0.1/lib/Post";
+import {User} from "@daml-js/openwork-feed-0.0.1/lib/Post";
 
 type Props = {
   existingUser?: User;

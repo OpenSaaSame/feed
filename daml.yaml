@@ -1,15 +1,16 @@
 sdk-version: 1.5.0
-name: openwork-feeds
+name: openwork-feed
 source: daml
 parties:
   - Alice
   - Bob
 version: 0.0.1
 sandbox-options:
-  - --ledgerid=openwork-feeds-sandbox
+  - --ledgerid=openwork-feed-sandbox
   - -w
 #json-api-options:
 #  - --websocket-config=maxDuration=1,heartBeatPer=5
 dependencies:
   - daml-prim
   - daml-stdlib
+  - daml-script

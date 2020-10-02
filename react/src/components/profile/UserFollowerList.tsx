@@ -1,6 +1,6 @@
 import React from 'react'
 import {List} from 'semantic-ui-react';
-import {Follower} from "@daml-js/openwork-feeds-0.0.1/lib/Post";
+import {Follower} from "@daml-js/openwork-feed-0.0.1/lib/Post";
 
 type Props = {
   followers: Follower[];

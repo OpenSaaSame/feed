@@ -2,7 +2,7 @@ import React from "react";
 import {Divider, Header, Icon, Segment} from "semantic-ui-react";
 import ProposalList from "./ProposalList";
 import {QueryResult} from "@daml/react";
-import {UserFollowerProposal} from "@daml-js/openwork-feeds-0.0.1/lib/Post";
+import {UserFollowerProposal} from "@daml-js/openwork-feed-0.0.1/lib/Post";
 
 type Props = {
   followProposals: QueryResult<UserFollowerProposal, any, any>

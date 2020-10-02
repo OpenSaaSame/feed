@@ -3,7 +3,7 @@ import {Grid, Header, Image, Menu} from 'semantic-ui-react'
 import MainView from './MainView';
 import {useLedger, useParty} from '@daml/react';
 import EditProfileView from "./profile/EditProfileView";
-import {User} from "@daml-js/openwork-feeds-0.0.1/lib/Post/module";
+import {User} from "@daml-js/openwork-feed-0.0.1/lib/Post/module";
 
 type Props = {
   onLogout: () => void;
