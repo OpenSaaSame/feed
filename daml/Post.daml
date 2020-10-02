@@ -26,10 +26,10 @@ template User
     followers : [Follower]
     createdAt : Time
     avatarUrl : Text
-    admin : Party
+    userDirectory : Party
   where
     signatory username
-    observer map (\f -> f.username) followers, admin
+    observer map (\f -> f.username) followers, userDirectory
 
     key username : Party
     maintainer key

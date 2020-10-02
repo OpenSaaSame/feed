@@ -15,7 +15,7 @@ post_unit_tests = script do
   -- Get the current time
   now <- getTime
   -- Public Party
-  admin <- allocateParty "admin"
+  userDirectory <- allocateParty "userDirectory"
 
   -- Create Alice's User profile
   aliceUserCid <- submit alice do
@@ -27,7 +27,7 @@ post_unit_tests = script do
       followers = []
       createdAt = now
       avatarUrl = "https://myAvatar.com"
-      admin
+      userDirectory
 
   -- Alice creates a post
   submit alice do
@@ -84,7 +84,7 @@ post_unit_tests = script do
       followers = []
       createdAt = now
       avatarUrl = "https://myAvatar.com"
-      admin
+      userDirectory
 
   -- Bob creates a request to follow Alice
   Some bobUser <- queryContractId bob bobUserCid
@@ -174,7 +174,7 @@ post_unit_tests = script do
       followers = []
       createdAt = now
       avatarUrl = "https://myAvatar.com"
-      admin
+      userDirectory
 
   -- Charlie wants to update his email address
   Some charlieUser <- queryContractId charlie charlieUserCid
