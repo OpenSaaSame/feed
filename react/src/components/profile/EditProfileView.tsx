@@ -48,7 +48,7 @@ const EditProfileView: React.FC<Props> = ({existingUser, afterLedgerSubmit}) => 
       followers: [],
       createdAt: new Date().toISOString(),
       avatarUrl,
-      admin: publicLedgerParty
+      userDirectory: publicLedgerParty
     };
   };
 
